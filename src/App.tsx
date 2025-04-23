@@ -1,38 +1,19 @@
-import React, { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { getDashboardData } from "./lib/data";
 import { Spinner } from "./components/Spinner";
 
-// Lazy-loaded components for optimized bundle size
-const LazyAnalytics = React.lazy(() => import("./components/Analytics"));
-const LazyPosts = React.lazy(() => import("./components/Posts"));
-const LazyPages = React.lazy(() => import("./components/Pages"));
-
-// Type definition for fetched dashboard data
-interface DashboardData {
-  useranalytics: any;
-  userpost: any;
-  userpages: any;
-}
+import Analytics from "./components/Analytics";
+import Posts from "./components/Posts";
+import Pages from "./components/Pages";
 
 function App() {
-  const [data, setData] = useState<DashboardData | null>(null);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
-    
     const loadDashboardData = async () => {
-      // Uncomment for basic client-side caching:
-      // const cached = localStorage.getItem("dashboard-data");
-      // if (cached) {
-      //   setData(JSON.parse(cached));
-      //   return;
-      // }
-
       const fetched = await getDashboardData();
       setData(fetched);
-
-      // localStorage.setItem("dashboard-data", JSON.stringify(fetched));
     };
-
     loadDashboardData();
   }, []);
 
@@ -48,9 +29,9 @@ function App() {
     <div className="p-6 space-y-6">
       <h1 className="text-3xl font-bold">Optimized Dashboard</h1>
       <Suspense fallback={<Spinner />}>
-        <LazyAnalytics data={data.useranalytics} />
-        <LazyPosts data={data.userpost} />
-        <LazyPages data={data.userpages} />
+        <Analytics data={data.useranalytics} />
+        <Posts data={data.userpost} />
+        <Pages data={data.userpages} />
       </Suspense>
     </div>
   );
